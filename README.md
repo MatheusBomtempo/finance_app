@@ -129,6 +129,30 @@ finance_app/
 - `/api/autentica` - API de autenticação (POST)
 - `/api/logout` - API de logout (POST)
 
+## Fluxo de Autenticação (Breve Descrição)
+
+1) Login (index `/`)
+- Usuário envia email/senha via formulário.
+- `POST /api/autentica` valida credenciais no MySQL, gera JWT e seta cookie httpOnly `auth-token`.
+- Em caso de sucesso, o cliente redireciona para `/dashboard`. Em falha, exibe modal com mensagem amigável.
+- Após 5 tentativas falhas na mesma sessão/IP, a API bloqueia novas tentativas por 15 minutos.
+
+2) Middleware (`src/middleware.ts`)
+- Para páginas protegidas como `/dashboard`, verifica a presença/expiração do token (decodificação leve no Edge).
+- Sem token válido: redireciona para `/` (com `?from=/dashboard`). Se já está logado e acessar `/`, redireciona para `/dashboard`.
+
+3) Dashboard (`/dashboard`)
+- Server Component usa `requireAuth()` que lê o cookie via `cookies()` (assíncrono) e valida o token.
+- Se inválido/expirado: redireciona para `/`.
+- Exibe “Bem-vindo, {email}” com sanitização (escape HTML) para segurança.
+
+4) Logout
+- `POST /api/logout` apaga o cookie `auth-token` e redireciona para `/`.
+
+5) Cadastro (`/cadastro`)
+- Formulário cria novo usuário via `POST /api/cadastro` (validações, bcrypt, email único).
+- Após sucesso, redireciona para a tela de login.
+
 ## Deploy
 
 Para produção, certifique-se de:
