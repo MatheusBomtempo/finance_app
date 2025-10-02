@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Páginas que requerem autenticação
-const protectedRoutes = ['/dashboard'];
+const protectedRoutes = ['/dashboard', '/admin'];
+
+// Mapa de perfis exigidos por rota (prefixo)
+const roleMap: Array<{ prefix: string; roles: Array<'admin' | 'user'> }> = [
+  { prefix: '/admin', roles: ['admin'] },
+];
 
 // Páginas que não devem ser acessadas por usuários logados
 const publicRoutes = ['/'];
@@ -51,6 +56,14 @@ export function middleware(request: NextRequest) {
     return response;
   }
   
+  // Checar perfil, se a rota exigir
+  if (decodedToken) {
+    const required = roleMap.find(r => pathname.startsWith(r.prefix));
+    if (required && !required.roles.includes(decodedToken.perfil)) {
+      return NextResponse.redirect(new URL('/sem_permissao', request.url));
+    }
+  }
+
   return NextResponse.next();
 }
 

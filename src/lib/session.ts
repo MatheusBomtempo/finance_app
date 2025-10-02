@@ -33,4 +33,12 @@ export async function requireAuth(): Promise<DecodedUserToken> {
   return user;
 }
 
+export async function requireRole(allowed: Array<'admin' | 'user'>): Promise<DecodedUserToken> {
+  const user = await requireAuth();
+  if (!allowed.includes(user.perfil)) {
+    redirect('/sem_permissao');
+  }
+  return user;
+}
+
 
