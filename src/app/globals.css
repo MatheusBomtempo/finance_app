@@ -3,6 +3,21 @@
 @tailwind utilities;
 
 :root {
+  --background: white;
+  --foreground: #0f172a;
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
+  }
+}
+
+:root {
   --background: #ffffff;
   --foreground: #171717;
 }
