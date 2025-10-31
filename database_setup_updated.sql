@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS expenses (
     FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     INDEX idx_user_id (user_id),
     INDEX idx_date (date),
-    INDEX idx_category (category)
+    INDEX idx_category (category) 
 );
 
 -- 8. Criar tabela para investimentos
