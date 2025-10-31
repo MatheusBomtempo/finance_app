@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Páginas que requerem autenticação
-const protectedRoutes = ['/dashboard', '/admin'];
+const protectedRoutes = ['/dashboard', '/admin', '/expenses', '/investments', '/balance'];
 
 // Mapa de perfis exigidos por rota (prefixo)
 const roleMap: Array<{ prefix: string; roles: Array<'admin' | 'user'> }> = [

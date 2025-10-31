@@ -10,6 +10,12 @@ Aplicação de controle financeiro com autenticação JWT e MySQL.
 - ✅ Redirecionamento automático
 - ✅ Interface moderna com Tailwind CSS
 - ✅ Sistema de perfis (admin/user)
+- ✅ **Gestão de Saldos** - Visualizar e atualizar saldo pessoal
+- ✅ **Controle de Despesas** - Adicionar, listar, filtrar e deletar despesas
+- ✅ **Gestão de Investimentos** - Gerenciar portfólio de investimentos
+- ✅ **Dashboard Inteligente** - Visão geral com estatísticas e gráficos
+- ✅ **Relatórios Financeiros** - Análise de gastos e rendimentos
+- ✅ **Sistema de Categorias** - Organização por categorias de despesas e tipos de investimentos
 
 ## Pré-requisitos
 
@@ -98,18 +104,42 @@ finance_app/
 ├── src/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── autentica/     # API de login
-│   │   │   └── logout/        # API de logout
-│   │   ├── dashboard/         # Página protegida
-│   │   ├── sem_permissao/     # Página de acesso negado
+│   │   │   ├── autentica/         # API de login
+│   │   │   ├── cadastro/          # API de cadastro
+│   │   │   ├── logout/            # API de logout
+│   │   │   ├── balance/           # API de saldo
+│   │   │   ├── expenses/          # API de despesas
+│   │   │   └── investments/       # API de investimentos
+│   │   ├── admin/                 # Área administrativa
+│   │   ├── balance/edit/          # Editar saldo
+│   │   ├── cadastro/              # Página de cadastro
+│   │   ├── dashboard/             # Dashboard principal
+│   │   ├── expenses/              # Gestão de despesas
+│   │   │   └── new/               # Nova despesa
+│   │   ├── investments/           # Gestão de investimentos
+│   │   │   └── new/               # Novo investimento
+│   │   ├── sem_permissao/         # Página de acesso negado
 │   │   ├── globals.css
 │   │   ├── layout.tsx
-│   │   └── page.tsx          # Página de login
+│   │   └── page.tsx               # Página de login
+│   ├── components/ui/             # Componentes de interface
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   ├── select.tsx
+│   │   └── textarea.tsx
 │   ├── lib/
-│   │   ├── auth.ts           # Funções de autenticação
-│   │   └── database.ts       # Configuração MySQL
-│   └── middleware.ts         # Middleware de proteção de rotas
-├── database_setup.sql        # Scripts SQL
+│   │   ├── models/                # Modelos TypeScript
+│   │   │   ├── Balance.ts
+│   │   │   ├── Expense.ts
+│   │   │   └── Investment.ts
+│   │   ├── auth.ts                # Funções de autenticação
+│   │   ├── database.ts            # Configuração MySQL
+│   │   ├── sanitize.ts            # Funções de sanitização
+│   │   └── session.ts             # Gestão de sessões
+│   └── middleware.ts              # Middleware de proteção de rotas
+├── database_setup.sql             # Scripts SQL completos
 └── README.md
 ```
 
@@ -123,11 +153,27 @@ finance_app/
 
 ## Rotas
 
+### Páginas de Usuário
 - `/` - Página de login
-- `/dashboard` - Dashboard protegido
+- `/cadastro` - Página de cadastro
+- `/dashboard` - Dashboard principal com visão geral
+- `/expenses` - Listagem de despesas
+- `/expenses/new` - Adicionar nova despesa
+- `/investments` - Listagem de investimentos
+- `/investments/new` - Adicionar novo investimento
+- `/balance/edit` - Atualizar saldo
 - `/sem_permissao` - Página de acesso negado
+
+### Páginas de Admin
+- `/admin` - Área administrativa (apenas admins)
+
+### APIs
 - `/api/autentica` - API de autenticação (POST)
 - `/api/logout` - API de logout (POST)
+- `/api/cadastro` - API de cadastro (POST)
+- `/api/balance` - API de saldo (GET, POST, PUT)
+- `/api/expenses` - API de despesas (GET, POST, PUT, DELETE)
+- `/api/investments` - API de investimentos (GET, POST, PUT, DELETE)
 
 ## Fluxo de Autenticação (Breve Descrição)
 
@@ -163,6 +209,48 @@ Para produção, certifique-se de:
 4. Configurar um servidor MySQL seguro
 5. Implementar rate limiting
 6. Configurar logs de auditoria
+
+## 🆕 Novos Recursos Integrados
+
+### 📊 Dashboard Financeiro Completo
+- Visão geral do saldo, despesas e investimentos
+- Estatísticas em tempo real com cálculos automáticos
+- Cards informativos com dados financeiros
+- Links diretos para adicionar novos itens
+
+### 💰 Gestão de Saldo
+- Visualização do saldo atual
+- Histórico de alterações
+- Atualização manual do saldo
+- Interface simples e intuitiva
+
+### 📈 Controle de Despesas
+- Listagem completa de todas as despesas
+- Filtros por categoria, data e descrição
+- Categorias predefinidas (Alimentação, Transporte, etc.)
+- Cálculo automático de totais e médias
+- Exclusão de despesas
+
+### 🏦 Gestão de Investimentos
+- Portfólio completo de investimentos
+- Diferentes tipos (Renda Fixa, Ações, Fundos, etc.)
+- Cálculo automático de rentabilidade
+- Acompanhamento de performance individual
+- Estatísticas de lucro/prejuízo
+
+### 🎨 Interface Modernizada
+- Design responsivo e atrativo
+- Componentes reutilizáveis
+- Feedback visual para todas as ações
+- Navegação intuitiva
+- Estados de carregamento e erro
+
+### 🔒 Segurança Mantida
+- Autenticação JWT preservada
+- Proteção de rotas para todas as novas páginas
+- Validação de dados no frontend e backend
+- Sanitização de inputs
+- Controle de acesso por usuário
 
 ## Licença
 

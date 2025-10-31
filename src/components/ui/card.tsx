@@ -37,6 +37,14 @@ export function CardContent({ children, className = '' }: CardProps) {
   );
 }
 
+export function CardDescription({ children, className = '' }: CardProps) {
+  return (
+    <p className={`text-sm text-gray-600 ${className}`}>
+      {children}
+    </p>
+  );
+}
+
 export function CardFooter({ children, className = '' }: CardProps) {
   return (
     <div className={`mt-4 flex justify-end space-x-2 ${className}`}>

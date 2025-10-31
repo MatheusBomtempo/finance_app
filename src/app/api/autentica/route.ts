@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     const { email, senha } = await request.json();
 
     // Controle de tentativas por IP/sessão (bloqueio simples)
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.ip || 'local';
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'local';
     const attemptsCookieName = `login-attempts-${ip}`;
     const attemptsRaw = request.cookies.get(attemptsCookieName)?.value;
     const attempts = attemptsRaw ? parseInt(attemptsRaw, 10) : 0;
