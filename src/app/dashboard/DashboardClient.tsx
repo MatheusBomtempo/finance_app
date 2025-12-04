@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -641,6 +642,11 @@ export function DashboardClient({ user, safeEmail }: DashboardClientProps) {
 
           {/* ABA INVESTIMENTOS */}
           <TabsContent value="investimentos" className="space-y-6">
+            <div className="flex justify-end">
+              <Link href="/investments">
+                <Button>Gerenciar Investimentos</Button>
+              </Link>
+            </div>
             <div className="grid md:grid-cols-3 gap-6 mb-6">
               <Card>
                 <CardHeader className="pb-2">

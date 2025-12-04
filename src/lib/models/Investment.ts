@@ -8,6 +8,10 @@ export interface Investment {
   purchase_date: string;
   created_at: string;
   updated_at: string;
+  api_id?: string;
+  yield_rate?: number;
+  is_automated?: boolean;
+  quantity?: number;
 }
 
 export interface CreateInvestmentRequest {
@@ -16,6 +20,10 @@ export interface CreateInvestmentRequest {
   amount: number;
   current_value: number;
   purchase_date: string;
+  api_id?: string;
+  yield_rate?: number;
+  is_automated?: boolean;
+  quantity?: number;
 }
 
 export interface UpdateInvestmentRequest {
@@ -24,6 +32,10 @@ export interface UpdateInvestmentRequest {
   amount?: number;
   current_value?: number;
   purchase_date?: string;
+  api_id?: string;
+  yield_rate?: number;
+  is_automated?: boolean;
+  quantity?: number;
 }
 
 export const InvestmentTypes = [

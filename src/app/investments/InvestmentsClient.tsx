@@ -19,6 +19,7 @@ interface InvestmentsClientProps {
 export function InvestmentsClient({ user }: InvestmentsClientProps) {
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   // Filtros
@@ -51,6 +52,29 @@ export function InvestmentsClient({ user }: InvestmentsClientProps) {
       setError('Erro ao carregar investimentos');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRefreshValues = async () => {
+    try {
+      setRefreshing(true);
+      const response = await fetch('/api/investments/refresh', {
+        method: 'POST'
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.updated > 0) {
+          await fetchInvestments(); // Recarrega a lista
+        }
+      } else {
+        setError('Erro ao atualizar valores');
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar valores:', error);
+      setError('Erro ao atualizar valores');
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -98,7 +122,7 @@ export function InvestmentsClient({ user }: InvestmentsClientProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       {/* Header */}
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -111,6 +135,13 @@ export function InvestmentsClient({ user }: InvestmentsClientProps) {
               <Link href="/dashboard">
                 <Button variant="ghost">← Dashboard</Button>
               </Link>
+              <Button 
+                variant="outline" 
+                onClick={handleRefreshValues}
+                disabled={refreshing}
+              >
+                {refreshing ? 'Atualizando...' : 'Atualizar Valores'}
+              </Button>
               <Link href="/investments/new">
                 <Button variant="primary">+ Novo Investimento</Button>
               </Link>
@@ -173,7 +204,7 @@ export function InvestmentsClient({ user }: InvestmentsClientProps) {
                 <p className="text-2xl font-bold text-blue-600">
                   R$ {totalInvested.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </p>
-                <p className="text-sm text-gray-500">Total Investido</p>
+                <p className="text-sm text-gray-700">Total Investido</p>
               </div>
             </CardContent>
           </Card>
@@ -183,7 +214,7 @@ export function InvestmentsClient({ user }: InvestmentsClientProps) {
                 <p className="text-2xl font-bold text-green-600">
                   R$ {totalCurrentValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </p>
-                <p className="text-sm text-gray-500">Valor Atual</p>
+                <p className="text-sm text-gray-700">Valor Atual</p>
               </div>
             </CardContent>
           </Card>
@@ -193,7 +224,7 @@ export function InvestmentsClient({ user }: InvestmentsClientProps) {
                 <p className={`text-2xl font-bold ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {totalReturn >= 0 ? '+' : ''}R$ {totalReturn.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </p>
-                <p className="text-sm text-gray-500">Lucro/Prejuízo</p>
+                <p className="text-sm text-gray-700">Lucro/Prejuízo</p>
               </div>
             </CardContent>
           </Card>
@@ -203,7 +234,7 @@ export function InvestmentsClient({ user }: InvestmentsClientProps) {
                 <p className={`text-2xl font-bold ${totalReturnPercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {totalReturnPercent >= 0 ? '+' : ''}{totalReturnPercent.toFixed(1)}%
                 </p>
-                <p className="text-sm text-gray-500">Rentabilidade</p>
+                <p className="text-sm text-gray-700">Rentabilidade</p>
               </div>
             </CardContent>
           </Card>
@@ -224,16 +255,26 @@ export function InvestmentsClient({ user }: InvestmentsClientProps) {
                   return (
                     <div key={investment.id} className="flex justify-between items-center p-4 border rounded-lg">
                       <div className="flex-1">
-                        <h3 className="font-medium text-gray-900">{investment.name}</h3>
+                        <div className="flex items-center">
+                          <h3 className="font-medium text-gray-900">{investment.name}</h3>
+                          {investment.is_automated && (
+                            <span className="ml-2 px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded-full">
+                              Auto
+                            </span>
+                          )}
+                        </div>
                         <div className="mt-1 text-sm text-gray-500">
                           <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2">
                             {investment.type}
                           </span>
                           <span>Compra: {new Date(investment.purchase_date).toLocaleDateString('pt-BR')}</span>
+                          {investment.quantity && investment.quantity > 0 && (
+                            <span className="ml-2">| Qtd: {investment.quantity}</span>
+                          )}
                         </div>
                         <div className="mt-2 text-sm">
                           <span className="text-gray-600">Investido: </span>
-                          <span className="font-medium">R$ {investment.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                          <span className="font-medium text-gray-900">R$ {investment.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                         </div>
                       </div>
                       <div className="text-right">

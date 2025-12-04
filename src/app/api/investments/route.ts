@@ -38,7 +38,11 @@ export async function GET(request: NextRequest) {
       current_value: parseFloat(row.current_value),
       purchase_date: row.purchase_date,
       created_at: row.created_at,
-      updated_at: row.updated_at
+      updated_at: row.updated_at,
+      api_id: row.api_id,
+      yield_rate: row.yield_rate ? parseFloat(row.yield_rate) : undefined,
+      is_automated: Boolean(row.is_automated),
+      quantity: row.quantity ? parseFloat(row.quantity) : undefined
     }));
 
     return NextResponse.json(investments);
@@ -60,7 +64,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body: CreateInvestmentRequest = await request.json();
-    const { name, type, amount, current_value, purchase_date } = body;
+    const { name, type, amount, current_value, purchase_date, api_id, yield_rate, is_automated, quantity } = body;
 
     // Validações
     if (!name || !type || !amount || !current_value || !purchase_date) {
@@ -94,8 +98,8 @@ export async function POST(request: NextRequest) {
     }
 
     const [result] = await pool.execute(
-      'INSERT INTO investments (user_id, name, type, amount, current_value, purchase_date) VALUES (?, ?, ?, ?, ?, ?)',
-      [user.userId, name, type, amount, current_value, purchase_date]
+      'INSERT INTO investments (user_id, name, type, amount, current_value, purchase_date, api_id, yield_rate, is_automated, quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [user.userId, name, type, amount, current_value, purchase_date, api_id || null, yield_rate || null, is_automated || false, quantity || null]
     ) as any[];
 
     const investment: Investment = {
@@ -107,7 +111,11 @@ export async function POST(request: NextRequest) {
       current_value,
       purchase_date,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      api_id,
+      yield_rate,
+      is_automated,
+      quantity
     };
 
     return NextResponse.json(investment, { status: 201 });
@@ -139,7 +147,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body: UpdateInvestmentRequest = await request.json();
-    const { name, type, amount, current_value, purchase_date } = body;
+    const { name, type, amount, current_value, purchase_date, api_id, yield_rate, is_automated, quantity } = body;
 
     // Verificar se o investimento existe e pertence ao usuário
     const [existingRows] = await pool.execute(
@@ -202,6 +210,26 @@ export async function PUT(request: NextRequest) {
       params.push(purchase_date);
     }
 
+    if (api_id !== undefined) {
+      updates.push('api_id = ?');
+      params.push(api_id);
+    }
+
+    if (yield_rate !== undefined) {
+      updates.push('yield_rate = ?');
+      params.push(yield_rate);
+    }
+
+    if (is_automated !== undefined) {
+      updates.push('is_automated = ?');
+      params.push(is_automated);
+    }
+
+    if (quantity !== undefined) {
+      updates.push('quantity = ?');
+      params.push(quantity);
+    }
+
     if (updates.length === 0) {
       return NextResponse.json(
         { message: 'Nenhum campo para atualizar' },
@@ -230,7 +258,11 @@ export async function PUT(request: NextRequest) {
       current_value: parseFloat(updatedRows[0].current_value),
       purchase_date: updatedRows[0].purchase_date,
       created_at: updatedRows[0].created_at,
-      updated_at: updatedRows[0].updated_at
+      updated_at: updatedRows[0].updated_at,
+      api_id: updatedRows[0].api_id,
+      yield_rate: updatedRows[0].yield_rate ? parseFloat(updatedRows[0].yield_rate) : undefined,
+      is_automated: Boolean(updatedRows[0].is_automated),
+      quantity: updatedRows[0].quantity ? parseFloat(updatedRows[0].quantity) : undefined
     };
 
     return NextResponse.json(investment);
