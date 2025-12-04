@@ -94,8 +94,8 @@ A aplicação estará disponível em `http://localhost:3000`
 
 ## Usuários de Teste
 
-- **Admin**: `admin@finance.com` / Senha: `password`
-- **User**: `user@finance.com` / Senha: `password`
+- **Admin**: `admin@finance.com` / Senha: `admin123`
+- **User**: `user@finance.com` / Senha: `user123`
 
 ## Estrutura do Projeto
 

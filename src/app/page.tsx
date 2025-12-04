@@ -176,10 +176,10 @@ export default function LoginPage() {
               Usuários de teste:
             </p>
             <p className="text-xs text-gray-500">
-              Admin: admin@finance.com / Senha: password
+              Admin: admin@finance.com / Senha: admin123
             </p>
             <p className="text-xs text-gray-500">
-              User: user@finance.com / Senha: password
+              User: user@finance.com / Senha: user123
             </p>
           </div>
         </form>
